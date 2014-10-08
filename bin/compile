@@ -40,20 +40,24 @@ install_java() {
   jdk_url=${3:-"http://download.oracle.com/otn-pub/java/jdk/7u67-b01/jdk-7u67-linux-x64.tar.gz"}
   jdk_ver=${4:-"1.7.0_67"}
 
-  if [ ! -d ${cache_dir} ]; then error "Invalid cache directory to store JDK."; fi
+  if [ ! -d ${CACHE_DIR} ]; then error "Invalid cache directory to store JDK."; fi
   if [ ! -d ${BUILD_DIR} ]; then error "Invalid slug directory to install JDK."; fi
 
   mkdir -p ${BUILD_DIR}/.jdk
 
-  if [ ! -f "${cache_dir}/.jdk/bin/java" ] || [ "${jdk_ver}" != "$(java_version ${cache_dir}/.jdk/bin/)" ] ; then
+  if [ ! -f ${CACHE_DIR}/.jdk/bin/java ]; then
     echo -n " (downloading...)"
-    rm -rf "${cache_dir}/.jdk"
-    mkdir -p "${cache_dir}/.jdk"
-    wget --quiet --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" -O - "${jdk_url}" | tar xz -C "${cache_dir}/.jdk" --strip-components=1
-    rm -rf "${cache_dir}/.jdk/src.zip" "${cache_dir}/.jdk/javafx-src.zip" "${cache_dir}/.jdk/db" "${cache_dir}/.jdk/man"
+    rm -rf ${CACHE_DIR}/.jdk
+    echo -n " (1...)"
+    mkdir -p ${CACHE_DIR}/.jdk
+    echo -n " (2...)"
+    wget --quiet --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" -O - "${jdk_url}" | tar xz -C ${CACHE_DIR}/.jdk --strip-components=1
+    echo -n " (3...)"
+    rm -rf ${CACHE_DIR}/.jdk/src.zip ${CACHE_DIR}/.jdk/javafx-src.zip ${CACHE_DIR}/.jdk/db ${CACHE_DIR}/.jdk/man
   fi
+  echo -n " (4...)"
   cp -r ${CACHE_DIR}/.jdk/. ${BUILD_DIR}/.jdk
-
+  echo -n " (5...)"
   if [ ! -f "${BUILD_DIR}/.jdk/bin/java" ]; then
     error "Unable to retrieve JDK."
   fi
