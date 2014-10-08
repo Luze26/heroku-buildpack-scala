@@ -61,7 +61,7 @@ install_java() {
   if [ ! -f "${BUILD_DIR}/.jdk/bin/java" ]; then
     error "Unable to retrieve JDK."
   fi
-
+  rm -rf ${CACHE_DIR}/.jdk
   export JAVA_HOME="${BUILD_DIR}/.jdk"
   export PATH="${BUILD_DIR}/.jdk/bin:${PATH}"
 }
@@ -167,8 +167,6 @@ for DIR in $CACHED_DIRS ; do
   rm -rf $CACHE_DIR/$DIR
   mkdir -p $CACHE_DIR/$DIR
   cp -r $DIR/.  $CACHE_DIR/$DIR
-  echo "-----> Dropping ivy cache from the slug: $DIR"
-  rm -rf $SBT_USER_HOME/.ivy2
 done
 
 # drop useless directories from slug for play and sbt-native-launcher only
