@@ -34,9 +34,36 @@ if [ ! -f ${BUILD_DIR}/system.properties ]; then
   echo "java.runtime.version=1.6" > ${BUILD_DIR}/system.properties
 fi
 
+install_java() {
+  cache_dir=$1
+  build_dir=$2
+  jdk_url=${3:-"http://download.oracle.com/otn-pub/java/jdk/7u67-b01/jdk-7u67-linux-x64.tar.gz"}
+  jdk_ver=${4:-"1.7.0_67"}
+
+  if [ ! -d "${cache_dir}" ]; then error "Invalid cache directory to store JDK."; fi
+  if [ ! -d "${build_dir}" ]; then error "Invalid slug directory to install JDK."; fi
+
+  mkdir -p "${build_dir}/.jdk"
+
+  if [ ! -f "${cache_dir}/.jdk/bin/java" ] || [ "${jdk_ver}" != "$(java_version ${cache_dir}/.jdk/bin/)" ] ; then
+    echo -n " (downloading...)"
+    rm -rf "${cache_dir}/.jdk" && mkdir -p "${cache_dir}/.jdk"
+    wget --quiet --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" -O - "${jdk_url}" | tar xz -C "${cache_dir}/.jdk" --strip-components=1
+    rm -rf "${cache_dir}/.jdk/src.zip" "${cache_dir}/.jdk/javafx-src.zip" "${cache_dir}/.jdk/db" "${cache_dir}/.jdk/man"
+  fi
+  cp -r "${cache_dir}/.jdk/." "${build_dir}/.jdk"
+
+  if [ ! -f "${build_dir}/.jdk/bin/java" ]; then
+    error "Unable to retrieve JDK."
+  fi
+
+  export JAVA_HOME="${build_dir}/.jdk"
+  export PATH="${build_dir}/.jdk/bin:${PATH}"
+}
+
 # install JDK
 javaVersion=$(detect_java_version ${BUILD_DIR})
-echo -n "-----> Installing OpenJDK ${javaVersion}..."
+echo -n "-----> Installing JDK ${javaVersion}..."
 install_java ${BUILD_DIR} ${javaVersion}
 jdk_overlay ${BUILD_DIR}
 echo "done"
