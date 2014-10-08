@@ -52,7 +52,7 @@ install_java() {
     wget --quiet --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" -O - "${jdk_url}" | tar xz -C "${cache_dir}/.jdk" --strip-components=1
     rm -rf "${cache_dir}/.jdk/src.zip" "${cache_dir}/.jdk/javafx-src.zip" "${cache_dir}/.jdk/db" "${cache_dir}/.jdk/man"
   fi
-  cp -r "${cache_dir}/.jdk/." "${BUILD_DIR}/.jdk"
+  cp -r ${CACHE_DIR}/.jdk/. ${BUILD_DIR}/.jdk
 
   if [ ! -f "${BUILD_DIR}/.jdk/bin/java" ]; then
     error "Unable to retrieve JDK."
