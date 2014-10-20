@@ -170,6 +170,8 @@ done
 
 # drop useless directories from slug for play and sbt-native-launcher only
 if is_sbt_native_packager $BUILD_DIR || is_play $BUILD_DIR; then
+  rm -rf $SBT_USER_HOME/boot/scala-2.10.3
+  rm -rf $SBT_USER_HOME/boot/scala-2.10.2
   if [ -d $SBT_USER_HOME/.ivy2 ]; then
     echo "-----> Dropping ivy cache from the slug"
     rm -rf $SBT_USER_HOME/.ivy2
